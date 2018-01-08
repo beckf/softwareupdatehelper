@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import os
 import plistlib
 import datetime

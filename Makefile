@@ -5,5 +5,5 @@ REVERSE_DOMAIN=org.da
 PAYLOAD=\
 	pack-usr-local-bin-softwareupdatehelper.py\
 
-PACKAGE_VERSION=1.1
+PACKAGE_VERSION=1.2
 
