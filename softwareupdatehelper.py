@@ -6,6 +6,7 @@ import datetime
 import logging
 import sys
 import getopt
+import random
 
 plist = "/Library/Application Support/JAMF/org.da.softwareupdatehelper.plist"
 current_datetime = datetime.datetime.now()
@@ -14,6 +15,11 @@ logfile = logdir + str(current_datetime) + ".log"
 
 
 def log(data):
+    """
+    Logs data to the log file and prints to stdout
+    :param data:
+    :return:
+    """
     if not os.path.exists(logdir):
         os.makedirs(logdir)
     logging.basicConfig(filename=logfile, level=logging.DEBUG)
@@ -22,10 +28,31 @@ def log(data):
 
 
 def save_plist(path, d):
+    """
+    Saves plist
+    :param path:
+    :param d:
+    :return:
+    """
     plistlib.writePlist(d, path)
+
+def random_date(start, end):
+    """
+    Return a random datetime between two datetime
+    objects.
+    """
+    delta = end - start
+    int_delta = (delta.days * 24 * 60 * 60) + delta.seconds
+    random_second = random.randrange(int_delta)
+    return start + datetime.timedelta(seconds=random_second)
 
 
 def read_plist(path):
+    """
+    Read plist
+    :param path:
+    :return:
+    """
     try:
         return plistlib.readPlist(path)
     except:
@@ -33,6 +60,10 @@ def read_plist(path):
 
 
 def run_update():
+    """
+    Run the update
+    :return:
+    """
     log("Running scheduled update")
     update_check = os.popen("softwareupdate -l").read()
     if "*" in update_check:
@@ -52,6 +83,10 @@ def run_update():
 
 
 def usage():
+    """
+    print usage information
+    :return:
+    """
     print(
         "--runnow (-r) : Run software update now.\n"
         "--runschedule (-s) : Run software update based on schedule"
@@ -78,8 +113,12 @@ def main(argv):
                 else:
                     print("Nothing to do.")
             else:
-                print("Ready to run and create plist")
-                run_update()
+                random_past_date = random_date(datetime.datetime.now() - datetime.timedelta(days=7),
+                                               datetime.datetime.now())
+                log("New install, ready create plist.")
+                log("Using past date of " + str(random_past_date))
+                plist_data = {"last_run": random_past_date}
+                save_plist(plist, plist_data)
         if opt in ("-r", "--runnow"):
             run_update()
 
