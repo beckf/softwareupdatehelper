@@ -18,6 +18,7 @@ def log(data):
         os.makedirs(logdir)
     logging.basicConfig(filename=logfile, level=logging.DEBUG)
     logging.debug(data)
+    print(data)
 
 
 def save_plist(path, d):
@@ -31,12 +32,12 @@ def read_plist(path):
         return False
 
 
-def run_scheduled_update():
+def run_update():
     log("Running scheduled update")
     update_check = os.popen("softwareupdate -l").read()
     if "*" in update_check:
         log("New Updates Available.")
-
+        log(update_check)
         if "[restart]" in update_check:
             restart = True
         update_result = os.popen("softwareupdate -ai").read()
@@ -73,14 +74,14 @@ def main(argv):
                 last_run = plist_data['last_run']
                 duration_time = last_run + datetime.timedelta(weeks = 2)
                 if duration_time < current_datetime:
-                    run_scheduled_update()
+                    run_update()
                 else:
                     print("Nothing to do.")
             else:
                 print("Ready to run and create plist")
-                run_scheduled_update()
+                run_update()
         if opt in ("-r", "--runnow"):
-            run_scheduled_update()
+            run_update()
 
 
 if __name__ == '__main__':
