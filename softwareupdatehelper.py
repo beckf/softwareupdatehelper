@@ -12,6 +12,7 @@ plist = "/Library/Application Support/JAMF/org.da.softwareupdatehelper.plist"
 current_datetime = datetime.datetime.now()
 logdir = "/Library/Logs/softwareupdatehelper/"
 logfile = logdir + str(current_datetime) + ".log"
+delay_days = 14
 
 
 def log(data):
@@ -69,8 +70,12 @@ def run_update():
     if "*" in update_check:
         log("New Updates Available.")
         log(update_check)
+
         if "[restart]" in update_check:
             restart = True
+        else:
+            restart = False
+
         update_result = os.popen("softwareupdate -ai").read()
         log(update_result)
 
@@ -89,17 +94,27 @@ def usage():
     """
     print(
         "--runnow (-r) : Run software update now.\n"
-        "--runschedule (-s) : Run software update based on schedule"
+        "--runschedule (-s) : Run software update based on schedule\n"
+        "--delay (-d) : How long in days since last run to wait.\n"
+        "--lastrun (-l) : Print last time script was run"
     )
 
 
 def main(argv):
     try:
-        opts, args = getopt.getopt(argv, "rs", ["runnow", "runschedule"])
+        opts, args = getopt.getopt(argv, "rsld:", ["runnow", "runschedule", "lastrun", "delay="])
     except getopt.GetoptError:
         usage()
         sys.exit(2)
     for opt, arg in opts:
+        if opt in ('-d', '--delay'):
+            global delay_days
+            delay_days = arg
+        if opt in ('-l', '--lastrun'):
+            plist_data = read_plist(plist)
+            if plist_data:
+                last_run = plist_data['last_run']
+                print(str(last_run))
         if opt in ("-h", "--help"):
             usage()
             sys.exit()
@@ -107,7 +122,7 @@ def main(argv):
             plist_data = read_plist(plist)
             if plist_data:
                 last_run = plist_data['last_run']
-                duration_time = last_run + datetime.timedelta(weeks = 2)
+                duration_time = last_run + datetime.timedelta(days = int(delay_days))
                 if duration_time < current_datetime:
                     run_update()
                 else:
