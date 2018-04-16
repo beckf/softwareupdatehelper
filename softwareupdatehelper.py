@@ -102,7 +102,7 @@ def usage():
 
 def main(argv):
     try:
-        opts, args = getopt.getopt(argv, "rsld:", ["runnow", "runschedule", "lastrun", "delay="])
+        opts, args = getopt.getopt(argv, "d:rsl", ["delay=", "runnow", "runschedule", "lastrun" ])
     except getopt.GetoptError:
         usage()
         sys.exit(2)
