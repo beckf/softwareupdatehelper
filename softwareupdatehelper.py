@@ -37,6 +37,7 @@ def save_plist(path, d):
     """
     plistlib.writePlist(d, path)
 
+
 def random_date(start, end):
     """
     Return a random datetime between two datetime
@@ -87,6 +88,24 @@ def run_update():
     save_plist(plist, plist_data)
 
 
+def check_updates(delay):
+    log("Looking for new updates")
+    update_check = os.popen("softwareupdate -l").read()
+    if "*" in update_check:
+        log("New Updates Available.")
+        log(update_check)
+        try:
+            plist_data = read_plist(plist)
+            if "scheduled_install" in plist_data.keys():
+                log("Update already scheduled for" + plist_data["scheduled_install"])
+            else:
+                scheduled_install = datetime.datetime.now() + datetime.timedelta(days=int(delay))
+                plist_data.update({"scheduled_install": scheduled_install})
+                save_plist(plist, plist_data)
+        except:
+            log("Unable to schedule install.")
+
+
 def usage():
     """
     print usage information
@@ -94,15 +113,18 @@ def usage():
     """
     print(
         "--runnow (-r) : Run software update now.\n"
-        "--runschedule (-s) : Run software update based on schedule\n"
-        "--delay (-d) : How long in days since last run to wait.\n"
-        "--lastrun (-l) : Print last time script was run"
+        "--runschedule (-s) : Run software update based on schedule.\n"
+        "--delay (-d) : How long in days since last run to wait before checking again.\n"
+        "--lastrun (-l) : Print last time script was run.\n"
     )
 
 
 def main(argv):
+    if not os.path.isfile(plist):
+        plist_data = {'last_run': datetime.datetime.now()}
+        save_plist(plist, plist_data)
     try:
-        opts, args = getopt.getopt(argv, "d:rsl", ["delay=", "runnow", "runschedule", "lastrun" ])
+        opts, args = getopt.getopt(argv, "d:rsl", ["delay=", "runnow", "runschedule", "lastrun"])
     except getopt.GetoptError:
         usage()
         sys.exit(2)
@@ -120,20 +142,15 @@ def main(argv):
             sys.exit()
         if opt in ("-s", "--runschedule"):
             plist_data = read_plist(plist)
-            if plist_data:
-                last_run = plist_data['last_run']
-                duration_time = last_run + datetime.timedelta(days = int(delay_days))
-                if duration_time < current_datetime:
+            if "scheduled_install" in plist_data.keys():
+                if datetime.datetime.now() > plist_data['scheduled_install']:
                     run_update()
+                    del plist_data['scheduled_install']
+                    save_plist(plist, plist_data)
                 else:
-                    print("Nothing to do.")
+                    log("Nothing to do.")
             else:
-                random_past_date = random_date(datetime.datetime.now() - datetime.timedelta(days=7),
-                                               datetime.datetime.now())
-                log("New install, ready create plist.")
-                log("Using past date of " + str(random_past_date))
-                plist_data = {"last_run": random_past_date}
-                save_plist(plist, plist_data)
+                check_updates(delay_days)
         if opt in ("-r", "--runnow"):
             run_update()
 
