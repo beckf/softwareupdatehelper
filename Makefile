@@ -5,5 +5,5 @@ REVERSE_DOMAIN=com.github.beckf
 PAYLOAD=\
 	pack-usr-local-bin-softwareupdatehelper.py\
 
-PACKAGE_VERSION=2.0
+PACKAGE_VERSION=2.1
 
