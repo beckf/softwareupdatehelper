@@ -12,6 +12,7 @@ plist = "/Library/Application Support/JAMF/org.da.softwareupdatehelper.plist"
 current_datetime = datetime.datetime.now()
 logdir = "/Library/Logs/softwareupdatehelper/"
 logfile = logdir + str(current_datetime) + ".log"
+# set default days in case we don't get it
 delay_days = 14
 
 
@@ -97,7 +98,7 @@ def check_updates(delay):
         try:
             plist_data = read_plist(plist)
             if "scheduled_install" in plist_data.keys():
-                log("Update already scheduled for" + plist_data["scheduled_install"])
+                log("Update already scheduled for " + str(plist_data["scheduled_install"]))
             else:
                 scheduled_install = datetime.datetime.now() + datetime.timedelta(days=int(delay))
                 plist_data.update({"scheduled_install": scheduled_install})
@@ -148,7 +149,7 @@ def main(argv):
                     del plist_data['scheduled_install']
                     save_plist(plist, plist_data)
                 else:
-                    log("Nothing to do.")
+                    log("Install already scheduled for " + str(plist_data['scheduled_install']))
             else:
                 check_updates(delay_days)
         if opt in ("-r", "--runnow"):
