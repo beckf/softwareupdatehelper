@@ -15,6 +15,8 @@ logfile = logdir + str(current_datetime) + ".log"
 # set default days in case we don't get it
 delay_days = 14
 
+__version__ = "2.5"
+
 
 def log(data):
     """
@@ -113,6 +115,7 @@ def usage():
     :return:
     """
     print(
+        "--version (-v) : Print Version.\n"
         "--runnow (-r) : Run software update now.\n"
         "--runschedule (-s) : Run software update based on schedule.\n"
         "--delay (-d) : How long in days since last run to wait before checking again.\n"
@@ -125,11 +128,24 @@ def main(argv):
         plist_data = {'last_run': datetime.datetime.now()}
         save_plist(plist, plist_data)
     try:
-        opts, args = getopt.getopt(argv, "d:rsl", ["delay=", "runnow", "runschedule", "lastrun"])
+        opts, args = getopt.getopt(argv, "d:rslvc", ["delay=",
+                                                     "runnow",
+                                                     "runschedule",
+                                                     "lastrun",
+                                                     "version",
+                                                     "check_schedule"])
     except getopt.GetoptError:
         usage()
         sys.exit(2)
     for opt, arg in opts:
+        if opt in ('-h', '--version'):
+            print(__version__)
+        if opt in ('-c', '--check_schedule'):
+            plist_data = read_plist(plist)
+            if "scheduled_install" in plist_data.keys():
+                print(str(plist_data['scheduled_install']))
+            else:
+                print("No scheduled install set.")
         if opt in ('-d', '--delay'):
             global delay_days
             delay_days = arg
