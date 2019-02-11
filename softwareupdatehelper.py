@@ -17,7 +17,7 @@ logfile = logdir + str(current_datetime) + ".log"
 # set default days in case we don't get it
 delay_days = 14
 
-__version__ = "3.4"
+__version__ = "3.4.1"
 
 
 def log(data):
@@ -139,7 +139,6 @@ def run_update():
 
 def nag():
         plist_data = read_plist(plist)
-        log(str(plist_data))
         if "scheduled_install" in plist_data.keys():
             log("Update scheduled for " + str(plist_data["scheduled_install"]))
             log("Triggering nag")
@@ -171,6 +170,8 @@ def nag():
             except subprocess.CalledProcessError as error:
                 if error.returncode is 2:
                     run_update()
+        else:
+            print("Nothing to do")
 
 
 def check_updates(delay):
