@@ -34,3 +34,17 @@ Create a Self-Service Policy that allows users to run SoftwareUpdate anytime.
 ```
 python /usr/local/bin/softwareupdatehelper.py --runnow
 ```
+
+## Help
+```
+sudo python ./softwareupdatehelper.py --help
+Note the order when using switches
+
+--help (-h) : This help.--version (-v) : Print Version.
+--lastrun (-l) : Print last time script was run.
+--icon (-i) : Full path to icon.png
+--delay (-d) : How long in days since last run to wait before checking again.
+--runnow (-r) : Run software update now.
+--runschedule (-s) : Run software update based on schedule.
+--nag (-n) : Check to if updates are scheduled and prompt to install again.
+```
