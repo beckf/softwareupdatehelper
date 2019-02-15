@@ -14,10 +14,11 @@ plist = "/Library/Application Support/JAMF/org.da.softwareupdatehelper.plist"
 current_datetime = datetime.datetime.now()
 logdir = "/Library/Logs/softwareupdatehelper/"
 logfile = logdir + str(current_datetime) + ".log"
-# set default days in case we don't get it
+# set default days in case we don't get any
 delay_days = 14
+icon = "/Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/Resources/Message.png"
 
-__version__ = "3.4.1"
+__version__ = "3.4.2"
 
 
 def log(data):
@@ -78,15 +79,15 @@ def run_update():
         log(update_check)
 
         try:
-            cmd = shlex.split('/Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/MacOS/jamfHelper' \
-                              ' -windowType hud ' \
-                              '-title "Software Update Helper" ' \
-                              '-heading "Installing Software Update" ' \
-                              '-windowPosition lr ' \
-                              '-button1 "OK" ' \
-                              '-defaultButton 1 ' \
-                              '-timeout 30 ' \
-                              '-icon "/Library/User Pictures/DA/DA_Logo_Large.png" ' \
+            cmd = shlex.split('/Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/MacOS/jamfHelper'
+                              ' -windowType hud '
+                              '-title "Software Update Helper" '
+                              '-heading "Installing Software Update" '
+                              '-windowPosition lr '
+                              '-button1 "OK" '
+                              '-defaultButton 1 '
+                              '-timeout 30 '
+                              '-icon ' + icon + " "
                               '-description "Updates will now be installed in silently in the background." ')
             # Get user decision, although we do not care.
             user_decision = subprocess.check_output(cmd)
@@ -103,30 +104,30 @@ def run_update():
 
         if restart is True:
             log("Restart requested")
-            cmd = shlex.split('/Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/MacOS/jamfHelper' \
-                  ' -windowType hud ' \
-                  '-title "Software Update Helper" ' \
-                  '-heading "Software Update" ' \
-                  '-windowPosition lr ' \
-                  '-button1 "OK" ' \
-                  '-defaultButton 1 ' \
-                  '-timeout 30 ' \
-                  '-icon "/Library/User Pictures/DA/DA_Logo_Large.png" ' \
+            cmd = shlex.split('/Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/MacOS/jamfHelper'
+                  ' -windowType hud '
+                  '-title "Software Update Helper" '
+                  '-heading "Software Update" '
+                  '-windowPosition lr '
+                  '-button1 "OK" '
+                  '-defaultButton 1 '
+                  '-timeout 30 '
+                  '-icon ' + icon + " "
                   '-description "Software update complete. Restarting in 60 minutes." ')
             # Get user decision, although we do not care.
             user_decision = subprocess.check_output(cmd)
             os.popen("sudo shutdown -r +60").read()
         else:
             try:
-                cmd = shlex.split('/Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/MacOS/jamfHelper' \
-                                  ' -windowType hud ' \
-                                  '-title "Software Update Helper" ' \
-                                  '-heading "Installing Software Update" ' \
-                                  '-windowPosition lr ' \
-                                  '-button1 "OK" ' \
-                                  '-defaultButton 1 ' \
-                                  '-timeout 30 ' \
-                                  '-icon "/Library/User Pictures/DA/DA_Logo_Large.png" ' \
+                cmd = shlex.split('/Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/MacOS/jamfHelper'
+                                  ' -windowType hud '
+                                  '-title "Software Update Helper" '
+                                  '-heading "Installing Software Update" '
+                                  '-windowPosition lr '
+                                  '-button1 "OK" '
+                                  '-defaultButton 1 '
+                                  '-timeout 30 '
+                                  '-icon ' + icon + " "
                                   '-description "Updates have been installed.  A restart will not be required." ')
                 # Get user decision, although we do not care.
                 user_decision = subprocess.check_output(cmd)
@@ -149,16 +150,16 @@ def nag():
                 updates = ""
 
             try:
-                cmd = shlex.split('/Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/MacOS/jamfHelper' \
-                                  ' -windowType hud ' \
-                                  '-title "Software Update Helper" ' \
-                                  '-heading "New Software Updates" ' \
-                                  '-windowPosition lr ' \
-                                  '-button1 "Delay Updates" ' \
-                                  '-button2 "Update Now" ' \
-                                  '-defaultButton 1 ' \
-                                  '-timeout 30 ' \
-                                  '-icon "/Library/User Pictures/DA/DA_Logo_Large.png" ' \
+                cmd = shlex.split('/Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/MacOS/jamfHelper'
+                                  ' -windowType hud '
+                                  '-title "Software Update Helper" '
+                                  '-heading "New Software Updates" '
+                                  '-windowPosition lr '
+                                  '-button1 "Delay Updates" '
+                                  '-button2 "Update Now" '
+                                  '-defaultButton 1 '
+                                  '-timeout 30 '
+                                  '-icon ' + icon + " "
                                   '-description "Software Updates have been scheduled for ' +
                                   str(plist_data['scheduled_install']) +
                                   '. Updates include:\n\n' +
@@ -197,16 +198,16 @@ def check_updates(delay):
             save_plist(plist, plist_data)
 
         try:
-            cmd = shlex.split('/Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/MacOS/jamfHelper' \
-                              ' -windowType hud ' \
-                              '-title "Software Update Helper" ' \
-                              '-heading "New Software Updates" ' \
-                              '-windowPosition lr ' \
-                              '-button1 "Delay Updates" ' \
-                              '-button2 "Update Now" ' \
-                              '-defaultButton 1 ' \
-                              '-timeout 30 ' \
-                              '-icon "/Library/User Pictures/DA/DA_Logo_Large.png" ' \
+            cmd = shlex.split('/Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/MacOS/jamfHelper'
+                              ' -windowType hud '
+                              '-title "Software Update Helper" '
+                              '-heading "New Software Updates" '
+                              '-windowPosition lr '
+                              '-button1 "Delay Updates" '
+                              '-button2 "Update Now" '
+                              '-defaultButton 1 '
+                              '-timeout 30 '
+                              '-icon ' + icon + " "
                               '-description "Software Updates have been scheduled for ' +
                               str(plist_data['scheduled_install']) +
                               '. Updates include:\n\n' +
@@ -226,15 +227,15 @@ def run_schedule():
         if datetime.datetime.now() > plist_data['scheduled_install']:
             log("Begin scheduled install for " + str(plist_data['scheduled_install']))
             try:
-                cmd = shlex.split('/Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/MacOS/jamfHelper ' \
-                  '-windowType hud ' \
-                  '-title "Software Update Helper" ' \
-                  '-heading "Software Update" ' \
-                  '-windowPosition lr ' \
-                  '-button1 "OK" ' \
-                  '-defaultButton 1 ' \
-                  '-timeout 20 ' \
-                  '-icon "/Library/User Pictures/DA/DA_Logo_Large.png" ' \
+                cmd = shlex.split('/Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/MacOS/jamfHelper '
+                  '-windowType hud '
+                  '-title "Software Update Helper" '
+                  '-heading "Software Update" '
+                  '-windowPosition lr '
+                  '-button1 "OK" '
+                  '-defaultButton 1 '
+                  '-timeout 20 '
+                  '-icon ' + icon + " "
                   '-description "Software updates will now installed as scheduled.')
                 # Get user decision, although we do not care.
                 user_decision = subprocess.check_output(cmd)
@@ -248,16 +249,16 @@ def run_schedule():
         else:
             log("Install already scheduled for " + str(plist_data['scheduled_install']))
             try:
-                cmd = shlex.split('/Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/MacOS/jamfHelper' \
-                      ' -windowType hud ' \
-                      '-title "Software Update Helper" ' \
-                      '-heading "Software Update Reminder" ' \
-                      '-windowPosition lr ' \
-                      '-button1 "Delay Updates" ' \
-                      '-button2 "Update Now" ' \
-                      '-defaultButton 1 ' \
-                      '-timeout 30 ' \
-                      '-icon "/Library/User Pictures/DA/DA_Logo_Large.png" ' \
+                cmd = shlex.split('/Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/MacOS/jamfHelper'
+                      ' -windowType hud '
+                      '-title "Software Update Helper" '
+                      '-heading "Software Update Reminder" '
+                      '-windowPosition lr '
+                      '-button1 "Delay Updates" '
+                      '-button2 "Update Now" '
+                      '-defaultButton 1 '
+                      '-timeout 30 '
+                      '-icon ' + icon + " "
                       '-description "Software Updates have been scheduled for ' + str(plist_data['scheduled_install']) +
                                   '. Updates include:\n' + '\n'.join(plist_data['pending_updates']) + '"')
                 user_decision = subprocess.check_output(cmd)
@@ -275,12 +276,14 @@ def usage():
     :return:
     """
     print(
+        "Note the order when using switches\n\n"
         "--help (-h) : This help."
         "--version (-v) : Print Version.\n"
+        "--lastrun (-l) : Print last time script was run.\n"
+        "--icon (-i) : Full path to icon.png\n"
+        "--delay (-d) : How long in days since last run to wait before checking again.\n"
         "--runnow (-r) : Run software update now.\n"
         "--runschedule (-s) : Run software update based on schedule.\n"
-        "--delay (-d) : How long in days since last run to wait before checking again.\n"
-        "--lastrun (-l) : Print last time script was run.\n"
         "--nag (-n) : Check to if updates are scheduled and prompt to install again.\n"
     )
 
@@ -297,14 +300,15 @@ def main(argv):
         save_plist(plist, plist_data)
 
     try:
-        opts, args = getopt.getopt(argv, "d:rhslvcn", ["delay=",
-                                                       "runnow",
-                                                       "runschedule",
-                                                       "lastrun",
-                                                       "version",
-                                                       "help",
-                                                       "check_schedule",
-                                                       "nag"])
+        opts, args = getopt.getopt(argv, "d:i:rhslvcn", ["delay=",
+                                                         "icon=",
+                                                         "runnow",
+                                                         "runschedule",
+                                                         "lastrun",
+                                                         "version",
+                                                         "help",
+                                                         "check_schedule",
+                                                         "nag"])
     except getopt.GetoptError:
         usage()
         sys.exit(2)
@@ -312,6 +316,9 @@ def main(argv):
     for opt, arg in opts:
         if opt in ('-v', '--version'):
             print(__version__)
+        if opt in ('-i', '--icon'):
+            global icon
+            icon = arg
         if opt in ('-n', '--nag'):
             nag()
         if opt in ('-c', '--check_schedule'):
