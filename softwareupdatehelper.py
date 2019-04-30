@@ -9,16 +9,19 @@ import getopt
 import random
 import subprocess
 import shlex
+import shutil
 
 plist = "/Library/Application Support/JAMF/org.da.softwareupdatehelper.plist"
 current_datetime = datetime.datetime.now()
 logdir = "/Library/Logs/softwareupdatehelper/"
 logfile = logdir + str(current_datetime) + ".log"
+reserves_location = "/usr/local/share/SUH/"
+reserves_disk_image = "SUH"
 # set default days in case we don't get any
 delay_days = 14
 icon = "/Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/Resources/Message.png"
 
-__version__ = "3.4.2"
+__version__ = "3.5"
 
 
 def log(data):
@@ -67,6 +70,47 @@ def read_plist(path):
         return False
 
 
+def create_reserves():
+    """
+    Creates the reserves if space is available.
+    :return: True(Success)/False(Fail)
+    """
+    root_disk_space = shutil.disk_usage('/')
+    if int(root_disk_space.free / 1024 / 1024 / 1024) > 7:
+        if not os.path.exists(reserves_location):
+            os.makedirs(reserves_location)
+        file = reserves_location + "/" + reserves_disk_image + ".dmg"
+        if not os.path.isfile(file):
+            create_cmd = shlex.split('/usr/bin/hdiutil create -size 7g -fs HFS+ -volname ' +
+                                     reserves_disk_image +
+                                     ' ' +
+                                     file)
+            create = subprocess.check_output(create_cmd)
+
+            if create:
+                return True
+            else:
+                return False
+    else:
+        return False
+
+
+def remove_reserves():
+    """
+    Removes the reserves to make room for updates.
+    :return:
+    """
+    file = reserves_location + "/" + reserves_disk_image + ".dmg"
+    if os.path.isfile(file):
+        os.remove(file)
+        if not os.path.isfile(file):
+            return True
+        else:
+            return False
+    else:
+        return True
+
+
 def run_update():
     """
     Run the update
@@ -99,6 +143,7 @@ def run_update():
         else:
             restart = False
 
+        remove_reserves()
         update_result = os.popen("softwareupdate -ai").read()
         log(update_result)
 
@@ -177,6 +222,12 @@ def nag():
 
 def check_updates(delay):
     log("Looking for new updates")
+
+    try:
+        create_reserves()
+    except:
+        log("Unable to reserve space")
+
     update_check = os.popen("softwareupdate -l").read()
     if "*" in update_check:
         log("New Updates Available.")
@@ -280,11 +331,12 @@ def usage():
         "--help (-h) : This help."
         "--version (-v) : Print Version.\n"
         "--lastrun (-l) : Print last time script was run.\n"
-        "--icon (-i) : Full path to icon.png\n"
-        "--delay (-d) : How long in days since last run to wait before checking again.\n"
+        "--icon= (-i) : Full path to icon.png\n"
+        "--delay= (-d) : How long in days since last run to wait before checking again.\n"
         "--runnow (-r) : Run software update now.\n"
         "--runschedule (-s) : Run software update based on schedule.\n"
         "--nag (-n) : Check to if updates are scheduled and prompt to install again.\n"
+        "--reserves= (-z) : Set to on to create reserves space and off to remove it.\n"
     )
 
 
@@ -300,15 +352,16 @@ def main(argv):
         save_plist(plist, plist_data)
 
     try:
-        opts, args = getopt.getopt(argv, "d:i:rhslvcn", ["delay=",
-                                                         "icon=",
-                                                         "runnow",
-                                                         "runschedule",
-                                                         "lastrun",
-                                                         "version",
-                                                         "help",
-                                                         "check_schedule",
-                                                         "nag"])
+        opts, args = getopt.getopt(argv, "d:i:z:rhslvcn", ["delay=",
+                                                           "icon=",
+                                                           "reserves=",
+                                                           "runnow",
+                                                           "runschedule",
+                                                           "lastrun",
+                                                           "version",
+                                                           "help",
+                                                           "check_schedule",
+                                                           "nag"])
     except getopt.GetoptError:
         usage()
         sys.exit(2)
@@ -342,6 +395,11 @@ def main(argv):
             run_schedule()
         if opt in ("-r", "--runnow"):
             run_update()
+        if opt in ('-z', '--reserves'):
+            if arg == 'on':
+                create_reserves()
+            elif arg == 'off':
+                remove_reserves()
 
 
 if __name__ == '__main__':
