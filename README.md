@@ -19,10 +19,10 @@ Create a policy that runs at a frequency you prefer for the machine to checkin w
 If updates are available they will be scheduled a force install in --delay days in the future.
 
 ```
-python /usr/local/bin/softwareupdatehelper.py --delay=16 --runschedule
+sudo /usr/bin/python /usr/local/bin/softwareupdatehelper.py --icon="/Library/User\ Pictures/Fun/Medal.png"  --delay=16 --runschedule
 ```
 
-Create a policy to nag the user at the frequency you prefer to prompt them to install the updates.  This gives the 
+Create a policy to nag the user at the frequency you prefer to prompt them to install the updates (daily?).  This gives the 
 end-user a chance to install at a convenient time before the forced scheduled install.
 
 ```
@@ -39,12 +39,13 @@ python /usr/local/bin/softwareupdatehelper.py --runnow
 ```
 sudo python ./softwareupdatehelper.py --help
 Note the order when using switches
-
---help (-h) : This help.--version (-v) : Print Version.
+--help (-h) : This help.
+--version (-v) : Print Version.
 --lastrun (-l) : Print last time script was run.
---icon (-i) : Full path to icon.png
---delay (-d) : How long in days since last run to wait before checking again.
+--icon= (-i) : Full path to icon.png
+--delay= (-d) : How long in days since last run to wait before checking again.
 --runnow (-r) : Run software update now.
 --runschedule (-s) : Run software update based on schedule.
 --nag (-n) : Check to if updates are scheduled and prompt to install again.
+--reserves= (-z) : Set to on to create reserves space and off to remove it.
 ```

@@ -21,7 +21,7 @@ reserves_disk_image = "SUH"
 delay_days = 14
 icon = "/Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/Resources/Message.png"
 
-__version__ = "3.5"
+__version__ = "3.5.1"
 
 
 def log(data):
@@ -75,8 +75,14 @@ def create_reserves():
     Creates the reserves if space is available.
     :return: True(Success)/False(Fail)
     """
-    root_disk_space = shutil.disk_usage('/')
-    if int(root_disk_space.free / 1024 / 1024 / 1024) > 7:
+    if sys.version_info[0] == 3:
+        root_disk_space = shutil.disk_usage('/')
+        root_disk_space_in_gigs = int(root_disk_space.free / 1024 / 1024 / 1024)
+    else:
+        root_disk_space = os.statvfs("/")
+        root_disk_space_in_gigs = (root_disk_space.f_bavail * root_disk_space.f_frsize) / 1024 / 1024 / 1024
+
+    if root_disk_space_in_gigs > 7:
         if not os.path.exists(reserves_location):
             os.makedirs(reserves_location)
         file = reserves_location + "/" + reserves_disk_image + ".dmg"
