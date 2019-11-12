@@ -167,7 +167,7 @@ def run_update():
                   '-description "Software update complete. Restarting in 60 minutes." ')
             # Get user decision, although we do not care.
             user_decision = subprocess.check_output(cmd)
-            os.popen("sudo shutdown -r +60").read()
+            os.popen("sudo shutdown -h +60").read()
         else:
             try:
                 cmd = shlex.split('/Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/MacOS/jamfHelper'
