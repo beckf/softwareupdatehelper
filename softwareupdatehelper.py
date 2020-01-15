@@ -21,7 +21,7 @@ reserves_disk_image = "SUH"
 delay_days = 14
 icon = "/Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/Resources/Message.png"
 
-__version__ = "3.6.2"
+__version__ = "3.6.3"
 
 
 def log(data):
@@ -166,7 +166,7 @@ def run_update():
                                     'DO NOT power off or sleep the computer. Doing so can result in data loss." ')
             # Get user decision, although we do not care.
             user_decision = subprocess.check_output(cmd)
-            os.popen("sudo shutdown -h").read()
+            os.popen("sudo shutdown -h now").read()
         else:
             try:
                 cmd = shlex.split('/Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/MacOS/jamfHelper'
