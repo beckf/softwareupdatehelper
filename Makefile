@@ -6,4 +6,3 @@ PAYLOAD=\
 	pack-usr-local-bin-softwareupdatehelper.py\
 
 PACKAGE_VERSION=`python softwareupdatehelper.py --version`
-
