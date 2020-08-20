@@ -144,7 +144,7 @@ def run_update():
         except:
             log("Exception in run_update notification.")
 
-        if "[restart]" in update_check:
+        if "restart" in update_check:
             restart = True
         else:
             restart = False
