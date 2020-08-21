@@ -21,7 +21,7 @@ reserves_disk_image = "SUH"
 delay_days = 14
 icon = "/Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/Resources/Message.png"
 
-__version__ = "3.6.3"
+__version__ = "3.6.4"
 
 
 def log(data):
@@ -144,7 +144,7 @@ def run_update():
         except:
             log("Exception in run_update notification.")
 
-        if "[restart]" in update_check:
+        if "restart" in update_check:
             restart = True
         else:
             restart = False
