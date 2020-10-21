@@ -9,30 +9,63 @@ and report back to a management system like JAMF Pro.
 
 ## Build Package
 Using Luggage:
+https://github.com/unixorn/luggage
 ```
 make pkg
 ```
 
-## JAMF Policies
-Create a policy that runs at a frequency you prefer for the machine to checkin with SUS and get updates.
+## Setup: JAMF Policies
 
-If updates are available they will be scheduled a force install in --delay days in the future.
+### Scheduled Check
+Create a policy that runs at a frequency you prefer (weekly?) for the machine to check-in with the Software Update Server
+ and get updates.
+
+If updates are available they will be scheduled to force install in --delay days in the future.  The forced install is 
+triggered by the next time runschedule executes after the scheduled date.
 
 ```
 sudo /usr/bin/python /usr/local/bin/softwareupdatehelper.py --icon="/Library/User\ Pictures/Fun/Medal.png"  --delay=16 --runschedule
 ```
 
+![JAMFScheduledPolicy](images/jamf_weekly_check.png)
+
+![SUHScheduled](images/update_nag.png)
+
+### Daily Nag
 Create a policy to nag the user at the frequency you prefer to prompt them to install the updates (daily?).  This gives the 
-end-user a chance to install at a convenient time before the forced scheduled install.
+end-user a chance to delay the install at a convenient time before the forced scheduled install.
 
 ```
 python /usr/local/bin/softwareupdatehelper.py --nag
 ```
 
-Create a Self-Service Policy that allows users to run SoftwareUpdate anytime.
+![JAMFNag](images/jamf_nag.png)
+
+![JAMFNag](images/update_nag.png)
+
+### Self-Service Policy
+Create a Self-Service Policy that allows users to install updates anytime.
 
 ```
 python /usr/local/bin/softwareupdatehelper.py --runnow
+```
+
+![JAMF_SelfService](images/jamf_ss_check_software_updates.png)
+
+### Reserves (Optional)
+SoftwareUpdateHelper also can reserve some space on the disk that can be "saved" for the IT admin.  
+This space can be freed up as needed by software updates.  One use for this is 
+major OS upgrades.  Use SoftwareUpdateHelper to toggle the reserved space on/off as needed. This is done
+by creating a disk image named SUH.dmg in /usr/local/share/SUH/.
+
+Turn on
+```
+python /usr/local/bin/softwareupdatehelper.py --reserves=on
+```
+
+Turn off
+```
+python /usr/local/bin/softwareupdatehelper.py --reserves=off
 ```
 
 ## Help
