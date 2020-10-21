@@ -69,6 +69,7 @@ python /usr/local/bin/softwareupdatehelper.py --reserves=off
 ```
 
 ## Help
+
 ```
 sudo python ./softwareupdatehelper.py --help
 Note the order when using switches
