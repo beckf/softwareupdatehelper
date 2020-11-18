@@ -21,7 +21,7 @@ reserves_disk_image = "SUH"
 delay_days = 14
 icon = "/Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/Resources/Message.png"
 
-__version__ = "3.6.4"
+__version__ = "3.6.5"
 
 
 def log(data):
@@ -87,7 +87,7 @@ def create_reserves():
             os.makedirs(reserves_location)
         file = reserves_location + "/" + reserves_disk_image + ".dmg"
         if not os.path.isfile(file):
-            create_cmd = shlex.split('/usr/bin/hdiutil create -size 7g -fs HFS+ -volname ' +
+            create_cmd = shlex.split('/usr/bin/hdiutil create -size 10g -fs HFS+ -volname ' +
                                      reserves_disk_image +
                                      ' ' +
                                      file)
