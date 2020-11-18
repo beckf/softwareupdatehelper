@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 import os
 import plistlib
 import datetime
@@ -17,11 +15,11 @@ logdir = "/Library/Logs/softwareupdatehelper/"
 logfile = logdir + str(current_datetime) + ".log"
 reserves_location = "/usr/local/share/SUH/"
 reserves_disk_image = "SUH"
-# set default days in case we don't get any
+# set default days in case we don't get any sent
 delay_days = 14
 icon = "/Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/Resources/Message.png"
 
-__version__ = "3.6.5"
+__version__ = "3.7"
 
 
 def log(data):
@@ -44,7 +42,11 @@ def save_plist(path, d):
     :param d:
     :return:
     """
-    plistlib.writePlist(d, path)
+    try:
+        with open(plist, "wb") as file:
+            return plistlib.dump(d, file)
+    except:
+        return False
 
 
 def random_date(start, end):
@@ -65,7 +67,8 @@ def read_plist(path):
     :return:
     """
     try:
-        return plistlib.readPlist(path)
+        with open(plist, "rb") as file:
+            return plistlib.load(file)
     except:
         return False
 
@@ -219,7 +222,7 @@ def nag():
                 user_decision = subprocess.check_output(cmd)
                 log("User delayed update.")
             except subprocess.CalledProcessError as error:
-                if error.returncode is 2:
+                if error.returncode == 2:
                     run_update()
         else:
             print("Nothing to do")
@@ -273,7 +276,7 @@ def check_updates(delay):
             user_decision = subprocess.check_output(cmd)
             log("User delayed update.")
         except subprocess.CalledProcessError as error:
-            if error.returncode is 2:
+            if error.returncode == 2:
                 run_update()
 
 
@@ -320,7 +323,7 @@ def run_schedule():
                 user_decision = subprocess.check_output(cmd)
                 log ("User delayed update.")
             except subprocess.CalledProcessError as error:
-                if error.returncode is 2:
+                if error.returncode == 2:
                     run_update()
     else:
         check_updates(delay_days)
