@@ -19,7 +19,7 @@ reserves_disk_image = "SUH"
 delay_days = 14
 icon = "/Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/Resources/Message.png"
 
-__version__ = "3.7"
+__version__ = "3.7.1"
 
 
 def log(data):
